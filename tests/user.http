@@ -10,11 +10,11 @@ Content-Type: application/json
 
 ### Validate email with code
 PUT http://localhost:3000/api/user/validate
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMwOTU1LCJleHAiOjE3NDY5OTAxNTV9.knrRTef8U70XHJ7GREQDsIqzUZwYDGm1wFMoqmdKnm0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTEwLCJleHAiOjE3NDY5OTExMTB9.ALfZ_ReR6zc7AYaxRPnFkSpaohdtHNb0c25WqiF7lbI
 Content-Type: application/json
 
 {
-  "code": "404689"
+  "code": "203013"
 }
 
 
@@ -47,4 +47,52 @@ Content-Type: application/json
 {
   "token": "bb5e0639496a2da973cb85008468b6320c749195",
   "new_password": "securePass123"
+}
+
+
+
+
+### Get current user info
+GET http://localhost:3000/api/user/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+
+
+
+### Soft delete user (default)
+DELETE http://localhost:3000/api/user/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+
+### Hard delete user
+DELETE http://localhost:3000/api/user/me?soft=false
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+
+### Get summary
+GET http://localhost:3000/api/user/summary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+
+
+### Update personal and company data
+PUT http://localhost:3000/api/user/register
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Content-Type: application/json
+
+{
+  "name": "Anna",
+  "surnames": "Smith",
+  "nif": "12345678X",
+  "company_name": "MyCorp",
+  "cif": "ES99887766",
+  "address": "Main Street, 1"
+}
+
+### Update personal data as self-employed
+PUT http://localhost:3000/api/user/register
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Content-Type: application/json
+
+{
+  "name": "John",
+  "surnames": "Doe",
+  "nif": "98765432Z",
+  "selfEmployed": true
 }
