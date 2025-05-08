@@ -5,14 +5,18 @@ const app = express();
 
 const userRoutes = require('./routes/user');
 const clientRoutes = require('./routes/client');
+const projectRoutes = require('./routes/project');
 
 app.use(morgan('dev'));
 app.use(express.json());
+
 app.use('/api/user', userRoutes);
 app.use('/uploads', express.static('uploads'));
 
 
 app.use('/api/client', clientRoutes);
+
+app.use('/api/project', projectRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
