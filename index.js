@@ -2,6 +2,7 @@ require('dotenv').config();
 const morgan = require('morgan');
 const express = require('express');
 const app = express();
+const fileLogger = require('./utils/fileLogger');
 
 const userRoutes = require('./routes/user');
 const clientRoutes = require('./routes/client');
@@ -10,6 +11,7 @@ const deliveryNoteRoutes = require('./routes/deliverynote');
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(fileLogger);
 
 app.use('/api/user', userRoutes);
 app.use('/uploads', express.static('uploads'));
