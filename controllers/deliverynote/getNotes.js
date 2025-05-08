@@ -1,1 +1,12 @@
-// TODO: implement controllers/deliverynote/getNotes.js
+const getNotes = require('../../models/deliverynote/getNotes');
+
+module.exports = async function (req, res) {
+  try {
+    const userId = req.user.id;
+    const notes = await getNotes(userId);
+    res.json(notes);
+  } catch (err) {
+    console.error('Error fetching delivery notes:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
