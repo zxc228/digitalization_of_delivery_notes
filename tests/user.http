@@ -10,11 +10,11 @@ Content-Type: application/json
 
 ### Validate email with code
 PUT http://localhost:3000/api/user/validate
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTEwLCJleHAiOjE3NDY5OTExMTB9.ALfZ_ReR6zc7AYaxRPnFkSpaohdtHNb0c25WqiF7lbI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ODUsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMzMjUzLCJleHAiOjE3NDY5OTI0NTN9.Nbr01t5WqTfsOc-p_O2MREQV7IytVt5RnKhvi7EiotY
 Content-Type: application/json
 
 {
-  "code": "203013"
+  "code": "336322"
 }
 
 
@@ -96,3 +96,6 @@ Content-Type: application/json
   "nif": "98765432Z",
   "selfEmployed": true
 }
+
+
+
