@@ -1,0 +1,223 @@
+paths:
+  /api/user/register:
+    post:
+      tags:
+        - User
+      summary: Register a new user
+      description: Creates a new user account and returns a JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      status:
+                        type: integer
+                      role:
+                        type: string
+        '422':
+          description: Invalid input
+        '409':
+          description: User already exists
+        '500':
+          description: Server error
+
+  /api/user/validate:
+    put:
+      tags:
+        - User
+      summary: Validate email with 6-digit code
+      description: Validates the email using a 6-digit code received after registration
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+              properties:
+                code:
+                  type: string
+                  description: 6-digit validation code
+                  example: "123456"
+      responses:
+        '200':
+          description: Email validated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email validated successfully
+        '400':
+          description: Incorrect or expired code
+        '422':
+          description: Code format invalid
+        '500':
+          description: Server error
+
+  /api/user/login:
+    post:
+      tags:
+        - User
+      summary: Log in a user
+      description: Authenticates a user and returns a JWT token if credentials are valid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      status:
+                        type: integer
+                      role:
+                        type: string
+        '401':
+          description: Incorrect password
+        '403':
+          description: Email not validated
+        '404':
+          description: User not found
+        '422':
+          description: Invalid input format
+        '500':
+          description: Server error
+  /api/user/recover-password:
+    post:
+      tags:
+        - User
+      summary: Request password reset
+      description: Generates a reset token and (in real app) sends it via email. Here it's returned in the response for testing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+      responses:
+        '200':
+          description: Reset token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password reset token generated
+                  resetToken:
+                    type: string
+                    example: abc123def456...
+        '404':
+          description: User not found
+        '422':
+          description: Invalid email format
+        '500':
+          description: Server error
+  /api/user/reset-password:
+    post:
+      tags:
+        - User
+      summary: Reset user password with token
+      description: Resets the password using the token generated from the recover-password endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - new_password
+              properties:
+                token:
+                  type: string
+                  description: Reset token from previous step
+                  example: abc123def456
+                new_password:
+                  type: string
+                  minLength: 8
+                  example: newPass123
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password reset successful
+        '404':
+          description: Invalid or expired token
+        '422':
+          description: Input format invalid
+        '500':
+          description: Server error

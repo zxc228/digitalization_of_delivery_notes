@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/api/user', require('./auth'));
-router.use('/api/user', require('./user'));
-router.use('/api/user', require('./profile'));
-router.use('/api/client', require('./client'));
-router.use('/api/project', require('./project'));
-router.use('/api/deliverynote', require('./deliverynote'));
+router.use('/user', require('./auth'));
+router.use('/user', require('./user'));
+router.use('/user', require('./profile'));
+router.use('/client', require('./client'));
+router.use('/project', require('./project'));
+router.use('/deliverynote', require('./deliverynote'));
 
 module.exports = router;

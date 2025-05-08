@@ -1,0 +1,50 @@
+### Register New User
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "email": "testrest1@example.com",
+  "password": "securePass123"
+}
+
+
+### Validate email with code
+PUT http://localhost:3000/api/user/validate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMwOTU1LCJleHAiOjE3NDY5OTAxNTV9.knrRTef8U70XHJ7GREQDsIqzUZwYDGm1wFMoqmdKnm0
+Content-Type: application/json
+
+{
+  "code": "404689"
+}
+
+
+
+### Login with valid credentials
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "email": "testrest1@example.com",
+  "password": "securePass123"
+}
+
+
+
+### Request password recovery
+POST http://localhost:3000/api/user/recover-password
+Content-Type: application/json
+
+{
+  "email": "testrest1@example.com"
+}
+
+
+
+### Reset password with token
+POST http://localhost:3000/api/user/reset-password
+Content-Type: application/json
+
+{
+  "token": "bb5e0639496a2da973cb85008468b6320c749195",
+  "new_password": "securePass123"
+}

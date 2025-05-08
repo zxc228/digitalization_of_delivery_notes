@@ -1,9 +1,11 @@
 {
-  "name": "project_partial_express",
+  "name": "final_assignment",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "npx jest --detectOpenHandles --forceExit"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +26,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "supertest": "^7.1.0"
   }
 }
