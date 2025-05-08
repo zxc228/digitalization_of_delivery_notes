@@ -1,28 +1,35 @@
 require('dotenv').config();
-const morgan = require('morgan');
 const express = require('express');
-const app = express();
+const morgan = require('morgan');
 const fileLogger = require('./utils/fileLogger');
+const { swaggerUi, swaggerSpec } = require('./config/swagger');
+const routes = require('./routes');
 
-const userRoutes = require('./routes/user');
-const clientRoutes = require('./routes/client');
-const projectRoutes = require('./routes/project');
-const deliveryNoteRoutes = require('./routes/deliverynote');
+const app = express();
 
+// Middleware
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(fileLogger);
 
-app.use('/api/user', userRoutes);
+// Static files
 app.use('/uploads', express.static('uploads'));
 
+// Swagger docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api/client', clientRoutes);
+// Log server-side errors (5xx)
+app.use(fileLogger);
 
-app.use('/api/project', projectRoutes);
+// API Routes
+app.use('/api', routes); 
 
-app.use('/api/deliverynote', deliveryNoteRoutes);
+// Fallback error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error' });
+});
 
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
