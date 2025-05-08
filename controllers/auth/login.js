@@ -24,7 +24,7 @@ async function login(req, res) {
   }
 
   const token = jwt.sign(
-    { _id: user.id, role: user.role },
+    { id: user.id, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: '3d' }
   );
@@ -32,7 +32,7 @@ async function login(req, res) {
   res.json({
     token,
     user: {
-      _id: user.id,
+      id: user.id,
       email: user.email,
       status: user.is_validated ? 1 : 0,
       role: user.role,

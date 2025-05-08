@@ -10,7 +10,7 @@ async function uploadImage(req, res) {
     const filename = req.file.filename;
     const imageUrl = `/uploads/${filename}`;
 
-    await saveUserImage(req.user._id, imageUrl);
+    await saveUserImage(req.user.id, imageUrl);
 
     res.json({
       message: 'Image uploaded successfully',

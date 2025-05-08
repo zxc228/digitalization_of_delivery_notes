@@ -7,7 +7,7 @@ async function validateEmail(req, res) {
     return res.status(422).json({ error: 'Invalid code' });
   }
 
-  const result = await validateUser(req.user._id, code);
+  const result = await validateUser(req.user.id, code);
 
   if (!result.success) {
     const message = result.reason === 'Invalid code'

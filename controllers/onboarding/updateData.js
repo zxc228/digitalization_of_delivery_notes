@@ -9,10 +9,10 @@ async function updatePersonalData(req, res) {
   }
 
   try {
-    await updateUserProfile(req.user._id, name, surnames, nif);
+    await updateUserProfile(req.user.id, name, surnames, nif);
 
     res.json({
-      _id: req.user._id,
+      id: req.user.id,
       name,
       surnames,
       nif,
@@ -32,12 +32,12 @@ async function updatePersonalAndCompanyData(req, res) {
   }
 
   try {
-    await updateUserProfile(req.user._id, name, surnames, nif);
+    await updateUserProfile(req.user.id, name, surnames, nif);
 
     if (company_name && cif && address) {
-      await updateUserCompany(req.user._id, company_name, cif, address);
+      await updateUserCompany(req.user.id, company_name, cif, address);
     } else if (selfEmployed === true) {
-      await updateUserCompany(req.user._id, `${name} ${surnames}`, nif, 'N/A');
+      await updateUserCompany(req.user.id, `${name} ${surnames}`, nif, 'N/A');
     }
 
     res.json({

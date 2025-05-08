@@ -1,7 +1,7 @@
 const db = require('../../config/db');
 
 async function deleteUser(req, res) {
-  const userId = req.user._id;
+  const userId = req.user.id;
   const soft = req.query.soft !== 'false'; // deafalut to soft
 
   try {

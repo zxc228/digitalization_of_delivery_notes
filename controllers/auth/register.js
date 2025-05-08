@@ -22,7 +22,7 @@ async function register(req, res) {
     const newUser = await createUser(email, hashed, code);
     console.log(`Validation code for ${email}: ${code}`);
     const token = jwt.sign(
-      { _id: newUser.id, role: newUser.role },
+      { id: newUser.id, role: newUser.role },
       process.env.JWT_SECRET,
       { expiresIn: '3d' }
     );
@@ -30,7 +30,7 @@ async function register(req, res) {
     res.json({
       token,
       user: {
-        _id: newUser.id,
+        id: newUser.id,
         email: newUser.email,
         status: newUser.status ? 1 : 0,
         role: newUser.role

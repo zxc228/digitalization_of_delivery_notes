@@ -2,7 +2,7 @@ const db = require('../../config/db');
 
 async function getUserByToken(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     const userRes = await db.query(
       'SELECT id, email, is_validated, role, created_at FROM users WHERE id = $1 AND is_deleted = false',
