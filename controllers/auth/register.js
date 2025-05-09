@@ -12,9 +12,9 @@ async function register(req, res) {
     }
 
     const existing = await findUserByEmail(email);
-    if (existing && existing.is_validated) {
-      return res.status(409).json({ error: 'User already exists and is validated' });
-    }
+    if (existing) {
+          return res.status(409).json({ error: 'User already exists' });
+        }
 
     const hashed = await bcrypt.hash(password, 10);
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -37,6 +37,9 @@ async function register(req, res) {
       }
     });
   } catch (err) {
+    if (err.code === '23505') {
+         return res.status(409).json({ error: 'User already exists' });
+          }
     console.error('Register error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }

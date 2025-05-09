@@ -15,5 +15,19 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  ipfs:
+    image: ipfs/kubo   
+    container_name: ipfs_node
+    restart: always
+    ports:
+      - "5001:5001"           # HTTP API
+      - "8080:8080"           # Gateway (HTTP GET /ipfs/{CID})
+      - "4001:4001"           # Swarm
+    volumes:
+      - ipfs_staging:/export
+      - ipfs_data:/data
+
 volumes:
   pgdata:
+  ipfs_staging:
+  ipfs_data:

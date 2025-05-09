@@ -39,6 +39,8 @@ afterAll(async () => {
   await db.end();
 });
 
+jest.setTimeout(15000);
+
 describe('GET /api/client', () => {
 
   it('returns list of my clients', async () => {

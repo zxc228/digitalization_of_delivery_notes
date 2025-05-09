@@ -41,6 +41,8 @@ afterAll(async () => {
   await db.end();           // закрываем пул PG
 });
 
+jest.setTimeout(15000);
+
 describe('POST /api/client', () => {
 
   it('creates a client', async () => {

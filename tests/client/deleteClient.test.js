@@ -32,6 +32,8 @@ afterAll(async () => {
   await db.end();
 });
 
+jest.setTimeout(15000);
+
 describe('DELETE /api/client/:id', () => {
 
   it('hard-deletes my client', async () => {

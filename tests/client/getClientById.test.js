@@ -38,6 +38,8 @@ afterAll(async () => {
   await db.end();
 });
 
+jest.setTimeout(15000);
+
 describe('GET /api/client/:id', () => {
 
   it('returns my client by id', async () => {

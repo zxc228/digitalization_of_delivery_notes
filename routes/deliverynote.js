@@ -9,19 +9,25 @@ const generatePdf = require('../controllers/deliverynote/generatePdf');
 const signNote = require('../controllers/deliverynote/signNote');
 const upload = require('../middleware/upload');
 
+
+//documented
 router.post('/', auth, createNote);
+//documented
 router.get('/', auth, getNotes);
+//documented
 router.get('/:id', auth, getNoteById);
+//documented
 router.delete('/:id', auth, deleteNote);
+
+//documented
 router.get('/pdf/:id', auth, generatePdf);
 
 
-router.post('/:id/sign', auth, upload.single('signature'), signNote);
-
-router.post('/test-upload', upload.single('signature'), (req, res) => {
-    console.log('Received file:', req.file);
-    if (!req.file) return res.status(400).json({ error: 'no file' });
-    res.json({ ok: true, file: req.file });
-  });
+router.post(
+    '/:id/sign',
+    auth,
+    upload('tmp').single('signature'),  
+    signNote
+  );
   
 module.exports = router;

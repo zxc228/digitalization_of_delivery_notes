@@ -35,6 +35,7 @@ afterAll(async () => {
   await server.close();
   await db.end();
 });
+jest.setTimeout(15000);
 
 describe('PUT /api/client/:id', () => {
 

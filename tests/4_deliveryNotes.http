@@ -1,0 +1,106 @@
+### Login with valid credentials
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "email": "testrest1@example.com",
+  "password": "securePass123"
+}
+
+
+### Create client
+POST http://localhost:3000/api/client
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+Content-Type: application/json
+
+{
+  "name": "ACME Corp",
+  "email": "contact@acme.com",
+  "phone": "+123456789",
+  "address": "123 Main Street"
+}
+
+### Create project
+POST http://localhost:3000/api/project
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+Content-Type: application/json
+
+{
+  "client_id": 1,
+  "name": "Website Redesign",
+  "description": "Full UI/UX overhaul"
+}
+
+
+### create delivery note
+POST http://localhost:3000/api/deliverynote
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+Content-Type: application/json
+
+{
+  "project_id": 1,
+  "items": [
+    { "type": "hour",     "description": "Frontend dev", "quantity": 5,   "unit_price": 40 },
+    { "type": "material", "description": "Screws",       "quantity": 100, "unit_price": 0.1 }
+  ]
+}
+
+
+### List my delivery notes
+GET http://localhost:3000/api/deliverynote
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+
+
+
+### Fetch single delivery note
+GET http://localhost:3000/api/deliverynote/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+
+
+### delete delivery note (if unsigned)
+DELETE http://localhost:3000/api/deliverynote/7
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+
+
+
+### ❶ Авто-режим  
+###    → если note подписан и PDF уже есть в IPFS — получите 302 на gateway  
+###    → иначе PDF сгенерируется и вернётся потоком  
+GET http://localhost:3000/api/deliverynote/pdf/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+
+### ❷ Всегда выгрузить в IPFS, сохранить URL и перейти по нему
+GET http://localhost:3000/api/deliverynote/pdf/1?storage=ipfs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+
+### ❸ Всегда сгенерировать локальный PDF и отдать потоковым ответом
+GET http://localhost:3000/api/deliverynote/pdf/1?storage=local
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+
+
+
+# подготовьте переменные
+TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM
+NOTE_ID=1                                        # id существующей delivery-note
+FILE=images.jpeg                                  # путь к файлу подписи
+
+#############################################
+# 1. AUTO  – параметр storage не передаём
+#############################################
+curl -X POST "http://localhost:3000/api/deliverynote/1/sign" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5NjQsImV4cCI6MTc0NzA3MjE2NH0.ebg8NkSDK0IZ2aqiV6tx8TzGJk_GwHHYkIIh7XQvvAM" \
+  -F "signature=@./images.jpeg"
+
+#############################################
+# 2. IPFS – принудительно выгрузить и вернуть URL IPFS
+#############################################
+curl -X POST "http://localhost:3000/api/deliverynote/${NOTE_ID}/sign?storage=ipfs" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -F "signature=@${FILE}"
+
+#############################################
+# 3. LOCAL – сохранить подпись локально, PDF не грузить в IPFS
+#############################################
+curl -X POST "http://localhost:3000/api/deliverynote/${NOTE_ID}/sign?storage=local" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -F "signature=@${FILE}"

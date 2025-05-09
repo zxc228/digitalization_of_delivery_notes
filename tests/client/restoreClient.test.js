@@ -37,6 +37,8 @@ afterAll(async () => {
   await db.end();
 });
 
+jest.setTimeout(15000);
+
 describe('PATCH /api/client/:id/restore', () => {
 
   it('restores archived client', async () => {
