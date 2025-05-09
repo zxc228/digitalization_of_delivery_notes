@@ -24,7 +24,7 @@ router.put('/:id', auth, updateClient);
 router.patch('/:id/archive', auth, archiveClient);
 //documented
 router.patch('/:id/restore', auth, restoreClient);
-
+//documented
 router.delete('/:id', auth, deleteClient);
 
 
