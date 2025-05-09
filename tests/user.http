@@ -10,11 +10,11 @@ Content-Type: application/json
 
 ### Validate email with code
 PUT http://localhost:3000/api/user/validate
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ODUsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMzMjUzLCJleHAiOjE3NDY5OTI0NTN9.Nbr01t5WqTfsOc-p_O2MREQV7IytVt5RnKhvi7EiotY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODMxNjEsImV4cCI6MTc0NzA0MjM2MX0.rzm-evJ4jOpLo0tCCXK8k3s8N2q9a3KTQK6AUD-ojK4
 Content-Type: application/json
 
 {
-  "code": "336322"
+  "code": "922567"
 }
 
 

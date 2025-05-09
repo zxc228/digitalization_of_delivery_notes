@@ -17,7 +17,7 @@ router.put('/validate', auth, validateEmail);
 router.post('/login', login);
 //documented
 router.post('/recover-password', recoverPassword);
-
+//documented
 router.post('/reset-password', resetPassword);
 
 module.exports = router;
