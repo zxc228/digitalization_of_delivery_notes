@@ -1,0 +1,62 @@
+### Login with valid credentials
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "email": "testrest1@example.com",
+  "password": "securePass123"
+}
+
+
+
+### Create client
+POST http://localhost:3000/api/client
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Content-Type: application/json
+
+{
+  "name": "ACME Corp",
+  "email": "contact@acme.com",
+  "phone": "+123456789",
+  "address": "123 Main Street"
+}
+
+
+### List my clients
+GET http://localhost:3000/api/client
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+
+### Get client by ID
+GET http://localhost:3000/api/client/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+### Update client
+PUT http://localhost:3000/api/client/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Content-Type: application/json
+
+{
+  "name": "ACME Inc New.",
+  "email": "new@acme.com",
+  "phone": "+987654321",
+  "address": "Baker St 221B"
+}
+
+
+
+### Archive client
+PATCH http://localhost:3000/api/client/1/archive
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+### Restore client
+PATCH http://localhost:3000/api/client/1/restore
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+### Hard-delete client
+DELETE http://localhost:3000/api/client/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk

@@ -11,12 +11,20 @@ const archiveClient = require('../controllers/client/archiveClient');
 const restoreClient = require('../controllers/client/restoreClient');
 const deleteClient = require('../controllers/client/deleteClient');
 
+
+//documented
 router.post('/', auth, createClient);
+//documented
 router.get('/', auth, getClients);
+//documented
 router.get('/:id', auth, getClientById);
+//documented
 router.put('/:id', auth, updateClient);
+//documented
 router.patch('/:id/archive', auth, archiveClient);
+//documented
 router.patch('/:id/restore', auth, restoreClient);
+
 router.delete('/:id', auth, deleteClient);
 
 

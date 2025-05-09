@@ -1,170 +1,149 @@
+openapi: 3.0.0
+info:
+  title: Delivery Notes API – Users
+  version: 1.0.0
+
+tags:
+  - name: User
+    description: Authentication / profile / admin actions
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    UserPublic:
+      type: object
+      properties:
+        id:     { type: integer }
+        email:  { type: string, format: email }
+        status: { type: integer, description: 1 = validated, 0 = pending }
+        role:   { type: string }
+    Summary:
+      type: object
+      properties:
+        numActiveUsers:        { type: integer }
+        numDeletedUsers:       { type: integer }
+        numInactiveUsers:      { type: integer }
+        numActiveCompanyUsers: { type: integer }
+        numActivePersonalUsers:{ type: integer }
+
 paths:
+
   /api/user/register:
     post:
-      tags:
-        - User
+      tags: [ User ]
       summary: Register a new user
-      description: Creates a new user account and returns a JWT token
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - email
-                - password
+              required: [ email, password ]
               properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                  minLength: 8
+                email:    { type: string, format: email }
+                password: { type: string, minLength: 8 }
       responses:
         '200':
-          description: User registered successfully
+          description: User registered
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  token:
-                    type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      email:
-                        type: string
-                      status:
-                        type: integer
-                      role:
-                        type: string
-        '422':
-          description: Invalid input
-        '409':
-          description: User already exists
-        '500':
-          description: Server error
+                  token: { type: string }
+                  user:  { $ref: '#/components/schemas/UserPublic' }
+        '422': { description: Invalid email / password }
+        '409': { description: User already exists }
+        '500': { description: Server error }
+
     put:
-      tags:
-        - User
-      summary: Onboarding - update personal and/or company data
-      description: Updates the personal user profile. Optionally adds company data or marks user as self-employed.
-      security:
-        - bearerAuth: []
+      tags: [ User ]
+      summary: Onboarding – update personal / company data
+      security: [ { bearerAuth: [] } ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - name
-                - surnames
-                - nif
+              required: [ name, surnames, nif ]
               properties:
-                name:
-                  type: string
-                surnames:
-                  type: string
-                nif:
-                  type: string
-                company_name:
-                  type: string
-                cif:
-                  type: string
-                address:
-                  type: string
-                selfEmployed:
-                  type: boolean
+                name:         { type: string }
+                surnames:     { type: string }
+                nif:          { type: string }
+                company_name: { type: string }
+                cif:          { type: string }
+                address:      { type: string }
+                selfEmployed: { type: boolean }
       responses:
         '200':
-          description: Personal and/or company data updated
+          description: Data updated
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-        '401':
-          description: Unauthorized
-        '422':
-          description: Missing required personal fields
-        '500':
-          description: Server error
+                  message: { type: string }
+        '401': { description: Unauthorized }
+        '422': { description: Required fields missing }
+        '500': { description: Server error }
 
   /api/user/validate:
     put:
-      tags:
-        - User
-      summary: Validate email with 6-digit code
-      description: Validates the email using a 6-digit code received after registration
-      security:
-        - bearerAuth: []
+      tags: [ User ]
+      summary: Validate email (6-digit code)
+      security: [ { bearerAuth: [] } ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - code
+              required: [ code ]
               properties:
-                code:
-                  type: string
-                  example: "123456"
+                code: { type: string, example: "123456" }
       responses:
-        '200':
-          description: Email validated successfully
-        '400':
-          description: Incorrect or expired code
-        '422':
-          description: Code format invalid
-        '500':
-          description: Server error
+        '200': { description: Email validated }
+        '400': { description: Incorrect or expired code }
+        '422': { description: Wrong code format }
+        '500': { description: Server error }
 
   /api/user/login:
     post:
-      tags:
-        - User
-      summary: Log in a user
-      description: Authenticates a user and returns a JWT token if credentials are valid
+      tags: [ User ]
+      summary: Log in
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - email
-                - password
+              required: [ email, password ]
               properties:
-                email:
-                  type: string
-                password:
-                  type: string
+                email:    { type: string }
+                password: { type: string }
       responses:
         '200':
-          description: User logged in successfully
-        '401':
-          description: Incorrect password
-        '403':
-          description: Email not validated
-        '404':
-          description: User not found
-        '422':
-          description: Invalid input format
-        '500':
-          description: Server error
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  user:  { $ref: '#/components/schemas/UserPublic' }
+        '401': { description: Wrong password }
+        '403': { description: Email not validated }
+        '404': { description: User not found }
+        '422': { description: Bad input }
+        '500': { description: Server error }
 
   /api/user/recover-password:
     post:
-      tags:
-        - User
+      tags: [ User ]
       summary: Request password reset
       requestBody:
         required: true
@@ -172,99 +151,83 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - email
+              required: [ email ]
               properties:
-                email:
-                  type: string
+                email: { type: string, format: email }
       responses:
         '200':
-          description: Reset token generated
-        '404':
-          description: User not found
-        '422':
-          description: Invalid email format
-        '500':
-          description: Server error
+          description: Reset token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:    { type: string }
+                  resetToken: { type: string }
+        '404': { description: User not found }
+        '422': { description: Invalid email }
+        '500': { description: Server error }
 
   /api/user/reset-password:
     post:
-      tags:
-        - User
-      summary: Reset user password with token
+      tags: [ User ]
+      summary: Reset password with token
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - token
-                - new_password
+              required: [ token, new_password ]
               properties:
-                token:
-                  type: string
-                new_password:
-                  type: string
+                token:        { type: string }
+                new_password: { type: string, minLength: 8 }
       responses:
-        '200':
-          description: Password reset successful
-        '404':
-          description: Invalid or expired token
-        '422':
-          description: Input format invalid
-        '500':
-          description: Server error
+        '200': { description: Password reset successful }
+        '404': { description: Invalid / expired token }
+        '422': { description: Invalid input }
+        '500': { description: Server error }
 
   /api/user/me:
+    parameters: []
     get:
-      tags:
-        - User
-      summary: Get current user profile
-      security:
-        - bearerAuth: []
+      tags: [ User ]
+      summary: Get my profile
+      security: [ { bearerAuth: [] } ]
       responses:
         '200':
-          description: Current user data
-        '401':
-          description: Unauthorized
-        '404':
-          description: User not found
-        '500':
-          description: Server error
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserPublic' }
+        '401': { description: Unauthorized }
+        '404': { description: User not found }
+        '500': { description: Server error }
+
     delete:
-      tags:
-        - User
-      summary: Delete current user (soft or hard)
-      security:
-        - bearerAuth: []
+      tags: [ User ]
+      summary: Delete my account (soft or hard)
+      security: [ { bearerAuth: [] } ]
       parameters:
         - in: query
           name: soft
-          schema:
-            type: boolean
-            default: true
+          schema: { type: boolean, default: true }
+          description: true = soft delete; false = hard delete
       responses:
-        '200':
-          description: User deleted successfully
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
+        '200': { description: Account deleted }
+        '401': { description: Unauthorized }
+        '500': { description: Server error }
 
   /api/user/summary:
     get:
-      tags:
-        - User
-      summary: Get dashboard summary
-      description: Statistics about user types
-      security:
-        - bearerAuth: []
+      tags: [ User ]
+      summary: Dashboard summary
+      security: [ { bearerAuth: [] } ]
       responses:
         '200':
-          description: Dashboard summary data
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
+          description: Summary stats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Summary' }
+        '401': { description: Unauthorized }
+        '500': { description: Server error }

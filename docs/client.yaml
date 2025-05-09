@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: Delivery Notes API – Clients
+  version: 1.0.0
+
+tags:
+  - name: Client
+    description: CRUD operations for clients
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Client:
+      type: object
+      properties:
+        id:         { type: integer }
+        user_id:    { type: integer }
+        name:       { type: string }
+        email:      { type: string, nullable: true }
+        phone:      { type: string, nullable: true }
+        address:    { type: string, nullable: true }
+        is_deleted: { type: boolean }
+        created_at:
+          type: string
+          format: date-time
+
+paths:
+
+  /api/client:
+    post:
+      tags: [ Client ]
+      summary: Create a new client
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ name ]
+              properties:
+                name:    { type: string, example: ACME Corp }
+                email:   { type: string, format: email, example: contact@acme.com }
+                phone:   { type: string, example: "+123456789" }
+                address: { type: string, example: "123 Main Street" }
+      responses:
+        '201':
+          description: Client created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Client' }
+        '400': { description: Client name missing }
+        '401': { description: Unauthorized }
+        '500': { description: Server error }
+
+    get:
+      tags: [ Client ]
+      summary: List my clients
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          description: Array of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Client' }
+        '401': { description: Unauthorized }
+        '500': { description: Server error }
+
+  /api/client/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: integer }
+
+    get:
+      tags: [ Client ]
+      summary: Get client by ID
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          description: The requested client
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Client' }
+        '401': { description: Unauthorized }
+        '404': { description: Client not found }
+        '500': { description: Server error }
+
+    put:
+      tags: [ Client ]
+      summary: Update a client
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ name ]
+              properties:
+                name:    { type: string, example: ACME Inc. }
+                email:   { type: string, format: email, example: new@acme.com }
+                phone:   { type: string, example: "+987654321" }
+                address: { type: string, example: "Baker St 221B" }
+      responses:
+        '200':
+          description: Updated client
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Client' }
+        '400': { description: Client name is required }
+        '401': { description: Unauthorized }
+        '404': { description: Client not found or not yours }
+        '500': { description: Server error }
+
+    patch:
+      tags: [ Client ]
+      summary: Archive client (soft delete)
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          description: Client archived
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: Client archived successfully }
+                  client:  { $ref: '#/components/schemas/Client' }
+        '401': { description: Unauthorized }
+        '404': { description: Client not found or already archived }
+        '500': { description: Server error }
+
+    delete:
+      tags: [ Client ]
+      summary: Permanently delete client
+      description: Hard-delete – physically removes the record.
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          description: Client deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: Client permanently deleted }
+        '401': { description: Unauthorized }
+        '404': { description: Client not found or not yours }
+        '500': { description: Server error }
+
+  /api/client/{id}/restore:
+    patch:
+      tags: [ Client ]
+      summary: Restore archived client
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Client restored
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: Client restored successfully }
+                  client:  { $ref: '#/components/schemas/Client' }
+        '401': { description: Unauthorized }
+        '404': { description: Client not found or not archived }
+        '500': { description: Server error }
