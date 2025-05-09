@@ -10,7 +10,6 @@ module.exports = async function (req, res) {
       return res.status(400).json({ message: 'Client ID and project name are required' });
     }
 
-    // Проверка: существует ли клиент и принадлежит ли пользователю
     const clientCheck = await pool.query(
       'SELECT * FROM clients WHERE id = $1 AND user_id = $2 AND is_deleted = false',
       [client_id, userId]

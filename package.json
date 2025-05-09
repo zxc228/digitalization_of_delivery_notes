@@ -7,7 +7,8 @@
     "start": "node index.js",
     "test": "npx jest --detectOpenHandles --forceExit", 
     "test:user": "npx jest tests/user",
-    "test:client": "npx jest tests/client"
+    "test:client": "npx jest tests/client", 
+    "test:project": "npx jest tests/project"
 
   },
   "keywords": [],

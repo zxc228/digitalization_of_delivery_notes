@@ -1,0 +1,72 @@
+### Login with valid credentials
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "email": "testrest1@example.com",
+  "password": "securePass123"
+}
+
+
+
+### Create client
+POST http://localhost:3000/api/client
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Content-Type: application/json
+
+{
+  "name": "ACME Corp",
+  "email": "contact@acme.com",
+  "phone": "+123456789",
+  "address": "123 Main Street"
+}
+
+### Create project
+POST http://localhost:3000/api/project
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Content-Type: application/json
+
+{
+  "client_id": 1,
+  "name": "Website Redesign",
+  "description": "Full UI/UX overhaul"
+}
+
+
+### List my projects
+GET http://localhost:3000/api/project
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+
+### Get project by ID
+GET http://localhost:3000/api/project/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+
+### Update project
+PUT http://localhost:3000/api/project/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Content-Type: application/json
+
+{
+  "name": "New Website",
+  "description": "Phase 2 scope"
+}
+
+
+### Archive project
+PATCH http://localhost:3000/api/project/1/archive
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+
+### Restore project
+PATCH http://localhost:3000/api/project/1/restore
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+
+
+### Hard delete project
+DELETE http://localhost:3000/api/project/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
