@@ -1,43 +1,33 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithClientToArchive() {
+  const email = `arch${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  
-  const reg = await agent.post('/api/user/register')
-    .send({ email: `arch${Date.now()}@mail.com`, password: 'securePass123' });
+  const reg = await global.agent.post('/api/user/register').send({ email, password });
+  await db.query('UPDATE users SET is_validated=true WHERE id=$1', [reg.body.user.id]);
+  const token = reg.body.token;
 
-  await db.query('UPDATE users SET is_validated = true WHERE id = $1',
-                 [reg.body.user.id]);
-
-  const login = await agent.post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
-
-  token = login.body.token;
-
-  
-  const created = await agent.post('/api/client')
+  const client = await global.agent
+    .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'To archive' });
 
-  clientId = created.body.id;
-});
+  return { token, clientId: client.body.id };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
-jest.setTimeout(15000);
 
 describe('PATCH /api/client/:id/archive', () => {
+  test('archives my client', async () => {
+    const { token, clientId } = await userWithClientToArchive();
 
-  it('archives my client', async () => {
-    const res = await agent
+    const res = await global.agent
       .patch(`/api/client/${clientId}/archive`)
       .set('Authorization', `Bearer ${token}`);
 
@@ -46,16 +36,26 @@ describe('PATCH /api/client/:id/archive', () => {
     expect(res.body.client.is_deleted).toBe(true);
   });
 
-  it('returns 404 when already archived', async () => {
-    const res = await agent
+  test('returns 404 when already archived', async () => {
+    const { token, clientId } = await userWithClientToArchive();
+
+    // Первый вызов — архивируем
+    await global.agent
+      .patch(`/api/client/${clientId}/archive`)
+      .set('Authorization', `Bearer ${token}`);
+
+    // Второй вызов — ожидаем 404
+    const res = await global.agent
       .patch(`/api/client/${clientId}/archive`)
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent
+  test('returns 401 without token', async () => {
+    const { clientId } = await userWithClientToArchive();
+
+    const res = await global.agent
       .patch(`/api/client/${clientId}/archive`);
 
     expect(res.statusCode).toBe(401);

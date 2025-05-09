@@ -1,41 +1,41 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId, projectId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithProjectToArchive() {
+  const email = `parch${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
- 
-  const reg = await agent.post('/api/user/register')
-    .send({ email: `parch${Date.now()}@mail.com`, password: 'securePass123' });
+  const reg = await global.agent
+    .post('/api/user/register')
+    .send({ email, password });
+
   await db.query('UPDATE users SET is_validated = true WHERE id=$1', [reg.body.user.id]);
+  const token = reg.body.token;
 
-  const login = await agent.post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
-  token = login.body.token;
-
-  
-  clientId = (await agent.post('/api/client')
+  const client = await global.agent
+    .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
-    .send({ name: 'ArcClient' })).body.id;
+    .send({ name: 'ArcClient' });
 
-  projectId = (await agent.post('/api/project')
+  const project = await global.agent
+    .post('/api/project')
     .set('Authorization', `Bearer ${token}`)
-    .send({ client_id: clientId, name: 'ArcProj' })).body.id;
-});
+    .send({ client_id: client.body.id, name: 'ArcProj' });
+
+  return { token, projectId: project.body.id };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
 describe('PATCH /api/project/:id/archive', () => {
+  test('archives my project', async () => {
+    const { token, projectId } = await userWithProjectToArchive();
 
-  it('archives my project', async () => {
-    const res = await agent
+    const res = await global.agent
       .patch(`/api/project/${projectId}/archive`)
       .set('Authorization', `Bearer ${token}`);
 
@@ -43,16 +43,26 @@ describe('PATCH /api/project/:id/archive', () => {
     expect(res.body.project.is_deleted).toBe(true);
   });
 
-  it('returns 404 when already archived', async () => {
-    const res = await agent
+  test('returns 404 when already archived', async () => {
+    const { token, projectId } = await userWithProjectToArchive();
+
+    // Первый вызов — архивируем
+    await global.agent
+      .patch(`/api/project/${projectId}/archive`)
+      .set('Authorization', `Bearer ${token}`);
+
+    // Второй вызов — уже архивировано
+    const res = await global.agent
       .patch(`/api/project/${projectId}/archive`)
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent
+  test('returns 401 without token', async () => {
+    const { projectId } = await userWithProjectToArchive();
+
+    const res = await global.agent
       .patch(`/api/project/${projectId}/archive`);
 
     expect(res.statusCode).toBe(401);

@@ -1,47 +1,45 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId, projectId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithArchivedProject() {
+  const email = `prest${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  
-  const reg = await agent.post('/api/user/register')
-    .send({ email: `prest${Date.now()}@mail.com`, password: 'securePass123' });
+  const reg = await global.agent
+    .post('/api/user/register')
+    .send({ email, password });
+
   await db.query('UPDATE users SET is_validated = true WHERE id=$1', [reg.body.user.id]);
+  const token = reg.body.token;
 
-  const login = await agent.post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
-  token = login.body.token;
-
-  
-  clientId = (await agent.post('/api/client')
+  const client = await global.agent
+    .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
-    .send({ name: 'RestoreClient' })).body.id;
+    .send({ name: 'RestoreClient' });
 
-  
-  projectId = (await agent.post('/api/project')
+  const project = await global.agent
+    .post('/api/project')
     .set('Authorization', `Bearer ${token}`)
-    .send({ client_id: clientId, name: 'Restorable' })).body.id;
+    .send({ client_id: client.body.id, name: 'Restorable' });
 
-  
-  await agent
-    .patch(`/api/project/${projectId}/archive`)
+  await global.agent
+    .patch(`/api/project/${project.body.id}/archive`)
     .set('Authorization', `Bearer ${token}`);
-});
+
+  return { token, projectId: project.body.id };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
 describe('PATCH /api/project/:id/restore', () => {
+  test('restores my archived project', async () => {
+    const { token, projectId } = await userWithArchivedProject();
 
-  it('restores my archived project', async () => {
-    const res = await agent
+    const res = await global.agent
       .patch(`/api/project/${projectId}/restore`)
       .set('Authorization', `Bearer ${token}`);
 
@@ -49,17 +47,28 @@ describe('PATCH /api/project/:id/restore', () => {
     expect(res.body.project.is_deleted).toBe(false);
   });
 
-  it('returns 404 when already active', async () => {
-    const res = await agent
+  test('returns 404 when already active', async () => {
+    const { token, projectId } = await userWithArchivedProject();
+
+  
+    await global.agent
+      .patch(`/api/project/${projectId}/restore`)
+      .set('Authorization', `Bearer ${token}`);
+
+    
+    const res = await global.agent
       .patch(`/api/project/${projectId}/restore`)
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent
+  test('returns 401 without token', async () => {
+    const { projectId } = await userWithArchivedProject();
+
+    const res = await global.agent
       .patch(`/api/project/${projectId}/restore`);
+
     expect(res.statusCode).toBe(401);
   });
 });

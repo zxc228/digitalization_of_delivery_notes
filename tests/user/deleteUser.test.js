@@ -1,39 +1,30 @@
-const request = require('supertest');
-const app     = require('../../index');
-const db      = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server;
-let agent;
-
-beforeAll(() => {
-  server = app.listen();        
-  agent  = request.agent(server); 
-});
-
-afterAll(async () => {
-  await server.close();           
-  await db.end();                
-});
-
+jest.setTimeout(15000);
 
 async function createValidatedUser() {
   const email = `user${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  const reg = await agent
+  const reg = await global.agent
     .post('/api/user/register')
-    .send({ email, password: 'securePass123' });
+    .send({ email, password });
 
-  await db.query('UPDATE users SET is_validated=true WHERE email=$1', [email]);
+  await db.query('UPDATE users SET is_validated = true WHERE email = $1', [email]);
 
   return reg.body.token;
 }
 
-describe('DELETE /api/user/me', () => {
+afterAll(async () => {
+  await db.end();
+});
 
+describe('DELETE /api/user/me', () => {
   test('soft delete returns 200 and “soft-deleted”', async () => {
     const token = await createValidatedUser();
 
-    const res = await agent
+    const res = await global.agent
       .delete('/api/user/me')
       .set('Authorization', `Bearer ${token}`);
 
@@ -44,7 +35,7 @@ describe('DELETE /api/user/me', () => {
   test('hard delete returns 200 and “permanently deleted”', async () => {
     const token = await createValidatedUser();
 
-    const res = await agent
+    const res = await global.agent
       .delete('/api/user/me?soft=false')
       .set('Authorization', `Bearer ${token}`);
 
@@ -53,7 +44,7 @@ describe('DELETE /api/user/me', () => {
   });
 
   test('without token returns 401', async () => {
-    const res = await agent.delete('/api/user/me');
+    const res = await global.agent.delete('/api/user/me');
     expect(res.status).toBe(401);
   });
 });

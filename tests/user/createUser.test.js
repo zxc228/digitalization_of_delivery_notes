@@ -1,24 +1,15 @@
-const request = require('supertest');
-const app     = require('../../index');
-const db      = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server;
-let agent;
-
-beforeAll(() => {
-  server = app.listen();          // dynamic port
-  agent  = request.agent(server);
-});
+jest.setTimeout(15000);
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
 describe('POST /api/user/register', () => {
-
   test('registers a new user', async () => {
-    const res = await agent
+    const res = await global.agent
       .post('/api/user/register')
       .send({
         email: `user${Date.now()}@mail.com`,
@@ -33,7 +24,7 @@ describe('POST /api/user/register', () => {
   });
 
   test('returns 422 for invalid email', async () => {
-    const res = await agent
+    const res = await global.agent
       .post('/api/user/register')
       .send({ email: 'bad', password: 'securePass123' });
 
@@ -41,7 +32,7 @@ describe('POST /api/user/register', () => {
   });
 
   test('returns 422 for short password', async () => {
-    const res = await agent
+    const res = await global.agent
       .post('/api/user/register')
       .send({ email: 'valid@mail.com', password: '123' });
 

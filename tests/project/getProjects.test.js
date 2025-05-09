@@ -1,47 +1,46 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithProjects() {
+  const email = `prlist${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  
-  const reg = await agent.post('/api/user/register')
-    .send({ email: `prlist${Date.now()}@mail.com`, password: 'securePass123' });
+  const reg = await global.agent
+    .post('/api/user/register')
+    .send({ email, password });
+
   await db.query('UPDATE users SET is_validated = true WHERE id=$1', [reg.body.user.id]);
+  const token = reg.body.token;
 
-  const login = await agent.post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
-  token = login.body.token;
-
-  
-  const client = await agent.post('/api/client')
+  const client = await global.agent
+    .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'ListClient' });
-  clientId = client.body.id;
 
-  
-  await agent.post('/api/project')
+  await global.agent
+    .post('/api/project')
     .set('Authorization', `Bearer ${token}`)
-    .send({ client_id: clientId, name: 'Project A' });
+    .send({ client_id: client.body.id, name: 'Project A' });
 
-  await agent.post('/api/project')
+  await global.agent
+    .post('/api/project')
     .set('Authorization', `Bearer ${token}`)
-    .send({ client_id: clientId, name: 'Project B' });
-});
+    .send({ client_id: client.body.id, name: 'Project B' });
+
+  return { token };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
 describe('GET /api/project', () => {
+  test('returns my projects array', async () => {
+    const { token } = await userWithProjects();
 
-  it('returns my projects array', async () => {
-    const res = await agent
+    const res = await global.agent
       .get('/api/project')
       .set('Authorization', `Bearer ${token}`);
 
@@ -52,8 +51,12 @@ describe('GET /api/project', () => {
     expect(res.body[0]).toHaveProperty('client_id');
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent.get('/api/project');
+  test('returns 401 without token', async () => {
+    const { } = await userWithProjects(); // создаем данные, но не передаем токен
+
+    const res = await global.agent
+      .get('/api/project');
+
     expect(res.statusCode).toBe(401);
   });
 });

@@ -1,49 +1,44 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithClient() {
+  const email = `id${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  // создаём и валидируем пользователя
-  const reg = await agent
+  const reg = await global.agent
     .post('/api/user/register')
-    .send({ email: `id${Date.now()}@mail.com`, password: 'securePass123' });
+    .send({ email, password });
 
   await db.query(
     'UPDATE users SET is_validated = true WHERE id = $1',
     [reg.body.user.id]
   );
 
-  const login = await agent
+  const login = await global.agent
     .post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
+    .send({ email, password });
 
-  token = login.body.token;
+  const token = login.body.token;
 
-  // создаём клиента
-  const c = await agent
+  const created = await global.agent
     .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'Client X' });
 
-  clientId = c.body.id;
-});
+  return { token, clientId: created.body.id };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
-jest.setTimeout(15000);
-
 describe('GET /api/client/:id', () => {
+  test('returns my client by id', async () => {
+    const { token, clientId } = await userWithClient();
 
-  it('returns my client by id', async () => {
-    const res = await agent
+    const res = await global.agent
       .get(`/api/client/${clientId}`)
       .set('Authorization', `Bearer ${token}`);
 
@@ -52,16 +47,20 @@ describe('GET /api/client/:id', () => {
     expect(res.body.name).toBe('Client X');
   });
 
-  it('returns 404 for unknown id', async () => {
-    const res = await agent
+  test('returns 404 for unknown id', async () => {
+    const { token } = await userWithClient();
+
+    const res = await global.agent
       .get('/api/client/999999')
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent.get(`/api/client/${clientId}`);
+  test('returns 401 without token', async () => {
+    const { clientId } = await userWithClient();
+
+    const res = await global.agent.get(`/api/client/${clientId}`);
     expect(res.statusCode).toBe(401);
   });
 });

@@ -1,50 +1,46 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithClients() {
+  const email = `list${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  
-  const reg = await agent.post('/api/user/register').send({
-    email: `list${Date.now()}@mail.com`,
-    password: 'securePass123'
-  });
-  const userId = reg.body.user.id;
-  await db.query(`UPDATE users SET is_validated = true WHERE id = $1`, [userId]);
+  const reg = await global.agent
+    .post('/api/user/register')
+    .send({ email, password });
 
- 
-  const login = await agent.post('/api/user/login').send({
-    email: reg.body.user.email,
-    password: 'securePass123'
-  });
-  token = login.body.token;
+  await db.query(`UPDATE users SET is_validated = true WHERE id = $1`, [reg.body.user.id]);
 
-  await agent
+  const login = await global.agent
+    .post('/api/user/login')
+    .send({ email, password });
+
+  const token = login.body.token;
+
+  await global.agent
     .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'Client A' });
 
-  await agent
+  await global.agent
     .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'Client B' });
-});
+
+  return { token };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
-jest.setTimeout(15000);
-
 describe('GET /api/client', () => {
+  test('returns list of my clients', async () => {
+    const { token } = await userWithClients();
 
-  it('returns list of my clients', async () => {
-    const res = await agent
+    const res = await global.agent
       .get('/api/client')
       .set('Authorization', `Bearer ${token}`);
 
@@ -54,8 +50,8 @@ describe('GET /api/client', () => {
     expect(res.body[0]).toHaveProperty('name');
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent.get('/api/client');
+  test('returns 401 without token', async () => {
+    const res = await global.agent.get('/api/client');
     expect(res.statusCode).toBe(401);
   });
 });

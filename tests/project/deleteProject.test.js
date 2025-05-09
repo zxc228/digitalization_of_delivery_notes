@@ -1,41 +1,41 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId, projectId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithProjectToDelete() {
+  const email = `pdel${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
-  
-  const reg = await agent.post('/api/user/register')
-    .send({ email: `pdel${Date.now()}@mail.com`, password: 'securePass123' });
+  const reg = await global.agent
+    .post('/api/user/register')
+    .send({ email, password });
+
   await db.query('UPDATE users SET is_validated = true WHERE id=$1', [reg.body.user.id]);
+  const token = reg.body.token;
 
-  const login = await agent.post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
-  token = login.body.token;
-
- 
-  clientId = (await agent.post('/api/client')
+  const client = await global.agent
+    .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
-    .send({ name: 'DelClient' })).body.id;
+    .send({ name: 'DelClient' });
 
-  projectId = (await agent.post('/api/project')
+  const project = await global.agent
+    .post('/api/project')
     .set('Authorization', `Bearer ${token}`)
-    .send({ client_id: clientId, name: 'Disposable' })).body.id;
-});
+    .send({ client_id: client.body.id, name: 'Disposable' });
+
+  return { token, projectId: project.body.id };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
 describe('DELETE /api/project/:id', () => {
+  test('hard-deletes my project', async () => {
+    const { token, projectId } = await userWithProjectToDelete();
 
-  it('hard-deletes my project', async () => {
-    const res = await agent
+    const res = await global.agent
       .delete(`/api/project/${projectId}`)
       .set('Authorization', `Bearer ${token}`);
 
@@ -43,16 +43,26 @@ describe('DELETE /api/project/:id', () => {
     expect(res.body.message).toMatch(/deleted/i);
   });
 
-  it('returns 404 on second delete', async () => {
-    const res = await agent
+  test('returns 404 on second delete', async () => {
+    const { token, projectId } = await userWithProjectToDelete();
+
+    await global.agent
+      .delete(`/api/project/${projectId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    const res = await global.agent
       .delete(`/api/project/${projectId}`)
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent.delete(`/api/project/${projectId}`);
+  test('returns 401 without token', async () => {
+    const { projectId } = await userWithProjectToDelete();
+
+    const res = await global.agent
+      .delete(`/api/project/${projectId}`);
+
     expect(res.statusCode).toBe(401);
   });
 });

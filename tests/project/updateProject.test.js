@@ -1,44 +1,41 @@
-const request = require('supertest');
-const app = require('../../index');
-const db  = require('../../config/db');
+require('../setupTestAgent');
+const db = require('../../config/db');
 
-let server, agent, token, clientId, projectId;
+jest.setTimeout(15000);
 
-beforeAll(async () => {
-  server = app.listen();
-  agent  = request.agent(server);
+async function userWithProjectToUpdate() {
+  const email = `pupd${Date.now()}@mail.com`;
+  const password = 'securePass123';
 
- 
-  const reg = await agent.post('/api/user/register')
-    .send({ email: `pupd${Date.now()}@mail.com`, password: 'securePass123' });
+  const reg = await global.agent
+    .post('/api/user/register')
+    .send({ email, password });
+
   await db.query('UPDATE users SET is_validated = true WHERE id=$1', [reg.body.user.id]);
+  const token = reg.body.token;
 
-  const login = await agent.post('/api/user/login')
-    .send({ email: reg.body.user.email, password: 'securePass123' });
-  token = login.body.token;
-
- 
-  const client = await agent.post('/api/client')
+  const client = await global.agent
+    .post('/api/client')
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'UpdClient' });
-  clientId = client.body.id;
 
-  
-  const proj = await agent.post('/api/project')
+  const project = await global.agent
+    .post('/api/project')
     .set('Authorization', `Bearer ${token}`)
-    .send({ client_id: clientId, name: 'Old Name', description: 'v1' });
-  projectId = proj.body.id;
-});
+    .send({ client_id: client.body.id, name: 'Old Name', description: 'v1' });
+
+  return { token, projectId: project.body.id };
+}
 
 afterAll(async () => {
-  await server.close();
   await db.end();
 });
 
 describe('PUT /api/project/:id', () => {
+  test('updates my project', async () => {
+    const { token, projectId } = await userWithProjectToUpdate();
 
-  it('updates my project', async () => {
-    const res = await agent
+    const res = await global.agent
       .put(`/api/project/${projectId}`)
       .set('Authorization', `Bearer ${token}`)
       .send({ name: 'Updated Name', description: 'v2 desc' });
@@ -48,8 +45,10 @@ describe('PUT /api/project/:id', () => {
     expect(res.body.description).toBe('v2 desc');
   });
 
-  it('returns 400 when name missing', async () => {
-    const res = await agent
+  test('returns 400 when name missing', async () => {
+    const { token, projectId } = await userWithProjectToUpdate();
+
+    const res = await global.agent
       .put(`/api/project/${projectId}`)
       .set('Authorization', `Bearer ${token}`)
       .send({ description: 'no name' });
@@ -57,8 +56,10 @@ describe('PUT /api/project/:id', () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it('returns 404 for wrong id', async () => {
-    const res = await agent
+  test('returns 404 for wrong id', async () => {
+    const { token } = await userWithProjectToUpdate();
+
+    const res = await global.agent
       .put('/api/project/999999')
       .set('Authorization', `Bearer ${token}`)
       .send({ name: 'Ghost' });
@@ -66,8 +67,10 @@ describe('PUT /api/project/:id', () => {
     expect(res.statusCode).toBe(404);
   });
 
-  it('returns 401 without token', async () => {
-    const res = await agent
+  test('returns 401 without token', async () => {
+    const { projectId } = await userWithProjectToUpdate();
+
+    const res = await global.agent
       .put(`/api/project/${projectId}`)
       .send({ name: 'No auth' });
 
