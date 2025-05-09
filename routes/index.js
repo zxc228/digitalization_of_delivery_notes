@@ -3,7 +3,10 @@ const router = express.Router();
 
 router.use('/user', require('./auth'));
 router.use('/user', require('./user'));
-router.use('/user', require('./profile'));
+
+//disabled the profile image upload
+//router.use('/user', require('./profile'));
+
 router.use('/client', require('./client'));
 router.use('/project', require('./project'));
 router.use('/deliverynote', require('./deliverynote'));
