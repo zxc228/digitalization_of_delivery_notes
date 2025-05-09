@@ -57,6 +57,17 @@ project_partial_express/
 ### 1. Start PostgreSQL (Docker)
 
 ```bash
+# 1. Остановить и удалить контейнер + том
+docker compose down -v
+#            └── -v  = одновременно удалить все анонимные и именованные тома,
+#                     указанные в файле (в вашем случае — pgdata)
+
+# 2. (Необязательно) убедиться, что том действительно ушёл
+docker volume ls          # должен исчезнуть том pgdata
+# или принудительно снести всё, что не используется
+docker volume prune       # ← потребует подтверждения
+
+# 3. Запустить заново — PostgreSQL создастся с нуля и применит init.sql
 docker compose up -d
 ```
 - This will:

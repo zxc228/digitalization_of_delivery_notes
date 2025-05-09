@@ -27,6 +27,7 @@ components:
           format: date-time
 
 paths:
+
   /api/project:
     post:
       tags: [ Project ]
@@ -44,24 +45,17 @@ paths:
                 name:        { type: string,  example: Website Redesign }
                 description: { type: string,  example: Full UI/UX overhaul }
       responses:
-        '201':
-          description: Project created
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Project' }
+        '201': { description: Project created,
+                 content: { application/json: { schema: { $ref: '#/components/schemas/Project' } } } }
         '400': { description: client_id or name missing }
         '401': { description: Unauthorized }
         '404': { description: Client not found / not yours }
         '500': { description: Server error }
 
-        /api/project:
-    post:   # <-- уже существует
-      ...
-
     get:
       tags: [ Project ]
       summary: List my projects
-      description: Returns all non-archived projects, принадлежащие текущему пользователю (или его компании).
+      description: Returns all non-archived projects owned by the authenticated user.
       security: [ { bearerAuth: [] } ]
       responses:
         '200':
@@ -74,7 +68,7 @@ paths:
         '401': { description: Unauthorized }
         '500': { description: Server error }
 
-      /api/project/{id}:
+  /api/project/{id}:
     parameters:
       - in: path
         name: id
@@ -84,27 +78,21 @@ paths:
     get:
       tags: [ Project ]
       summary: Get project by ID
-      description: Returns a single project owned by the authenticated user.
       security: [ { bearerAuth: [] } ]
       responses:
         '200':
-          description: The requested project
+          description: Requested project
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Project' }
         '401': { description: Unauthorized }
         '404': { description: Project not found or not yours }
         '500': { description: Server error }
-        put:
+
+    put:
       tags: [ Project ]
       summary: Update a project
-      description: Изменяет название и/или описание проекта, принадлежащего текущему пользователю.
       security: [ { bearerAuth: [] } ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: integer }
       requestBody:
         required: true
         content:
@@ -113,23 +101,38 @@ paths:
               type: object
               required: [ name ]
               properties:
-                name:        { type: string,  example: New Website }
-                description: { type: string,  example: "Phase 2 scope" }
+                name:        { type: string, example: New Website }
+                description: { type: string, example: Phase 2 scope }
       responses:
-        '200':
-          description: Updated project
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Project' }
+        '200': { description: Updated project,
+                 content: { application/json: { schema: { $ref: '#/components/schemas/Project' } } } }
         '400': { description: Project name is required }
         '401': { description: Unauthorized }
         '404': { description: Project not found or not yours }
         '500': { description: Server error }
-      /api/project/{id}/archive:
+
+    delete:
+      tags: [ Project ]
+      summary: Permanently delete project
+      description: Hard-delete (removes the record from DB).
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          description: Project deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: Project permanently deleted }
+        '401': { description: Unauthorized }
+        '404': { description: Project not found or not yours }
+        '500': { description: Server error }
+
+  /api/project/{id}/archive:
     patch:
       tags: [ Project ]
       summary: Archive project (soft delete)
-      description: Sets `is_deleted = true` for a project owned by the authenticated user.
       security: [ { bearerAuth: [] } ]
       parameters:
         - in: path
@@ -149,11 +152,11 @@ paths:
         '401': { description: Unauthorized }
         '404': { description: Project not found or already archived }
         '500': { description: Server error }
-      /api/project/{id}/restore:
+
+  /api/project/{id}/restore:
     patch:
       tags: [ Project ]
       summary: Restore archived project
-      description: Sets `is_deleted = false` for a previously archived project owned by the authenticated user.
       security: [ { bearerAuth: [] } ]
       parameters:
         - in: path
@@ -172,29 +175,4 @@ paths:
                   project: { $ref: '#/components/schemas/Project' }
         '401': { description: Unauthorized }
         '404': { description: Project not found or not archived }
-        '500': { description: Server error }
-
-        delete:
-      tags: [ Project ]
-      summary: Permanently delete project
-      description: **Hard-delete** — удаляет запись из БД (доступно только владельцу).
-      security: [ { bearerAuth: [] } ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: integer }
-      responses:
-        '200':
-          description: Project deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Project permanently deleted
-        '401': { description: Unauthorized }
-        '404': { description: Project not found or not yours }
         '500': { description: Server error }
