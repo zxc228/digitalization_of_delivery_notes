@@ -9,7 +9,7 @@ Content-Type: application/json
 
 ### Create client
 POST http://localhost:3000/api/client
-Authorization: Bearer <YOUR_TOKEN>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4ODEyNzUsImV4cCI6MTc0NzE0MDQ3NX0.mYYRdDQYWwB4fC3Bvr8X_DQgSVSC14nYF8uxDIg2f2A
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 
 ### Create project
 POST http://localhost:3000/api/project
-Authorization: Bearer <YOUR_TOKEN>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4ODEyNzUsImV4cCI6MTc0NzE0MDQ3NX0.mYYRdDQYWwB4fC3Bvr8X_DQgSVSC14nYF8uxDIg2f2A
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ### Create delivery note
 POST http://localhost:3000/api/deliverynote
-Authorization: Bearer <YOUR_TOKEN>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4ODEyNzUsImV4cCI6MTc0NzE0MDQ3NX0.mYYRdDQYWwB4fC3Bvr8X_DQgSVSC14nYF8uxDIg2f2A
 Content-Type: application/json
 
 {

@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ### Create client
 POST http://localhost:3000/api/client
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
@@ -24,18 +24,18 @@ Content-Type: application/json
 
 ### List my clients
 GET http://localhost:3000/api/client
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 
 ### Get client by ID
 GET http://localhost:3000/api/client/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 ### Update client
 PUT http://localhost:3000/api/client/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
@@ -49,14 +49,14 @@ Content-Type: application/json
 
 ### Archive client
 PATCH http://localhost:3000/api/client/1/archive
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 ### Restore client
 PATCH http://localhost:3000/api/client/1/restore
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 ### Hard-delete client
 DELETE http://localhost:3000/api/client/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>

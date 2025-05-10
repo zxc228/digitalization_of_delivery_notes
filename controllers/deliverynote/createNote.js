@@ -4,7 +4,7 @@ const findProjectClient = require('../../models/project/findProjectClient');
 const pool         = require('../../config/db');
 
 module.exports = async function (req, res) {
-  const client       = await pool.connect();
+  
   const { project_id, items } = req.body;
   const userId       = req.user.id;
 
@@ -12,6 +12,7 @@ module.exports = async function (req, res) {
     return res.status(400).json({ message: 'Project ID and at least one item are required' });
   }
 
+  const client = await pool.connect();
   try {
     const clientId = await findProjectClient(project_id, userId);
     if (!clientId) {

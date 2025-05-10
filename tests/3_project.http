@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ### Create client
 POST http://localhost:3000/api/client
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
@@ -23,7 +23,7 @@ Content-Type: application/json
 
 ### Create project
 POST http://localhost:3000/api/project
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
@@ -35,19 +35,19 @@ Content-Type: application/json
 
 ### List my projects
 GET http://localhost:3000/api/project
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 
 ### Get project by ID
 GET http://localhost:3000/api/project/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 
 ### Update project
 PUT http://localhost:3000/api/project/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
@@ -58,15 +58,15 @@ Content-Type: application/json
 
 ### Archive project
 PATCH http://localhost:3000/api/project/1/archive
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 
 ### Restore project
 PATCH http://localhost:3000/api/project/1/restore
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>
 
 
 ### Hard delete project
 DELETE http://localhost:3000/api/project/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3ODM5MDQsImV4cCI6MTc0NzA0MzEwNH0.3qkbwvDRlug1fM_UYWa4LqcjpsZBo-j467i0JIgnKtk
+Authorization: Bearer <YOUR_TOKEN>

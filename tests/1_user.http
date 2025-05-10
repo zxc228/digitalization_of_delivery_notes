@@ -10,11 +10,11 @@ Content-Type: application/json
 
 ### Validate email with code
 PUT http://localhost:3000/api/user/validate
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4MTI5MzIsImV4cCI6MTc0NzA3MjEzMn0.2oaC0mWKP_8Hif3LkSf1V9LnTvTxtfmX6cGl-YDw4GI
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
-{
-  "code": "800626"
+{ 
+  "code": "196908"
 }
 
 
@@ -54,26 +54,26 @@ Content-Type: application/json
 
 ### Get current user info
 GET http://localhost:3000/api/user/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Authorization: Bearer <YOUR_TOKEN>
 
 
 
 ### Soft delete user (default)
 DELETE http://localhost:3000/api/user/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Authorization: Bearer <YOUR_TOKEN>
 
 ### Hard delete user
 DELETE http://localhost:3000/api/user/me?soft=false
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Authorization: Bearer <YOUR_TOKEN>
 
 ### Get summary
 GET http://localhost:3000/api/user/summary
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Authorization: Bearer <YOUR_TOKEN>
 
 
 ### Update personal and company data
 PUT http://localhost:3000/api/user/register
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
@@ -87,7 +87,7 @@ Content-Type: application/json
 
 ### Update personal data as self-employed
 PUT http://localhost:3000/api/user/register
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ2NzMxOTMxLCJleHAiOjE3NDY5OTExMzF9.4DPEs3JPuVA0BDBYcv33LupKU_ZXMSX_4KjPWhG_RCw
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 {
