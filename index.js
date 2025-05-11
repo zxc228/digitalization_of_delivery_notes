@@ -1,41 +1,55 @@
 require('dotenv').config();
-const express    = require('express');
-const morgan     = require('morgan');
-const fs         = require('fs');
-const path       = require('path');
-const fileLogger = require('./utils/fileLogger');
+const express = require('express');
+const morgan = require('morgan');
+const fs = require('fs');
+const path = require('path');
+
 const { swaggerUi, swaggerSpec } = require('./config/swagger');
-const routes     = require('./routes');
+const routes = require('./routes');
+
+const logger = require('./utils/logger');
+const expressWinston = require('express-winston');
 
 const app = express();
 
-// Ensure upload directories exist
+// === Ensure upload dirs ===
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
-const TMP_DIR    = path.join(UPLOAD_DIR, 'tmp');
-
+const TMP_DIR = path.join(UPLOAD_DIR, 'tmp');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-if (!fs.existsSync(TMP_DIR))    fs.mkdirSync(TMP_DIR, { recursive: true });
+if (!fs.existsSync(TMP_DIR)) fs.mkdirSync(TMP_DIR, { recursive: true });
 
-// Middleware
+// === Core Middleware ===
 app.use(morgan('dev'));
 app.use(express.json());
-
-// Static files
 app.use('/uploads', express.static(UPLOAD_DIR));
-
-// Swagger docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Log server-side errors (5xx)
-app.use(fileLogger);
+// === Log all HTTP requests (optional)
+app.use(expressWinston.logger({
+  winstonInstance: logger,
+  meta: false,
+  msg: '{{req.method}} {{req.url}} {{res.statusCode}} - {{res.responseTime}}ms',
+}));
 
-// API Routes
-app.use('/api', routes); 
+// === Main routes
+app.use('/api', routes);
 
-// Fallback error handler
+// === Attach status to error objects
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal Server Error' });
+  if (!err.status && res.statusCode >= 400) {
+    err.status = res.statusCode;
+  }
+  next(err);
+});
+
+// === Error logging to winston (4xx/5xx handled via filters in logger)
+app.use(expressWinston.errorLogger({
+  winstonInstance: logger,
+}));
+
+// === Fallback error response
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
 });
 
 module.exports = app;

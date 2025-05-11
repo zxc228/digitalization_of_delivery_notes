@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const createUser = require('../../models/user/createUser');
 const findUserByEmail = require('../../models/user/findUserByEmail');
+const sendMail = require('../../utils/mailer');
 
 async function register(req, res) {
   try {
@@ -21,6 +22,11 @@ async function register(req, res) {
 
     const newUser = await createUser(email, hashed, code);
     console.log(`Validation code for ${email}: ${code}`);
+    await sendMail(
+      email,
+      'Confirm your email',
+      `Your verification code is: ${code}`
+    );
     const token = jwt.sign(
       { id: newUser.id, role: newUser.role },
       process.env.JWT_SECRET,

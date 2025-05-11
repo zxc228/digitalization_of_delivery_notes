@@ -16,16 +16,24 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   ipfs:
-    image: ipfs/kubo   
+    image: ipfs/kubo
     container_name: ipfs_node
     restart: always
     ports:
-      - "5001:5001"           # HTTP API
-      - "8080:8080"           # Gateway (HTTP GET /ipfs/{CID})
-      - "4001:4001"           # Swarm
+      - "5001:5001"
+      - "8080:8080"
+      - "4001:4001"
     volumes:
       - ipfs_staging:/export
       - ipfs_data:/data
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    restart: always
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
 
 volumes:
   pgdata:

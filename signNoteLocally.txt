@@ -1,9 +1,0 @@
-Windows
-curl.exe -X POST "http://localhost:3000/api/deliverynote/7/sign?storage=local" ^
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3MjI1MzYsImV4cCI6MTc0Njk4MTczNn0.ExbMVhNWyZ8-z8XBzpsqfXNrR0-W8iE9kJhZDMq2yRU" ^
-  -F "signature=@images.jpeg"
-
-Linux
-curl -X POST "http://localhost:3000/api/deliverynote/7/sign?storage=local" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY3MjI1MzYsImV4cCI6MTc0Njk4MTczNn0.ExbMVhNWyZ8-z8XBzpsqfXNrR0-W8iE9kJhZDMq2yRU" \
-  -F "signature=@images.jpeg"
