@@ -1,20 +1,29 @@
 const db = require('../../config/db');
 
-async function deleteUser(req, res) {
+async function deleteUser(req, res, next) {
   const userId = req.user.id;
-  const soft = req.query.soft !== 'false'; // deafalut to soft
+  const soft = req.query.soft !== 'false'; // default to soft delete
 
   try {
+    let result;
     if (soft) {
-      await db.query('UPDATE users SET is_deleted = true WHERE id = $1', [userId]);
+      result = await db.query(
+        'UPDATE users SET is_deleted = true WHERE id = $1 AND is_deleted = false',
+        [userId]
+      );
     } else {
-      await db.query('DELETE FROM users WHERE id = $1', [userId]);
+      result = await db.query('DELETE FROM users WHERE id = $1', [userId]);
+    }
+
+    if (result.rowCount === 0) {
+      const err = new Error('User not found or already deleted');
+      err.status = 404;
+      throw err;
     }
 
     res.json({ message: soft ? 'User soft-deleted' : 'User permanently deleted' });
   } catch (err) {
-    console.error('Delete user error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    next(err);
   }
 }
 

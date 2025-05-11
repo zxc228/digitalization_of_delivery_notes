@@ -1,6 +1,6 @@
 const db = require('../../config/db');
 
-async function getUserByToken(req, res) {
+async function getUserByToken(req, res, next) {
   try {
     const userId = req.user.id;
 
@@ -10,7 +10,11 @@ async function getUserByToken(req, res) {
     );
 
     const user = userRes.rows[0];
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) {
+      const err = new Error('User not found');
+      err.status = 404;
+      throw err;
+    }
 
     res.json({
       _id: user.id,
@@ -20,8 +24,7 @@ async function getUserByToken(req, res) {
       createdAt: user.created_at,
     });
   } catch (err) {
-    console.error('Get user error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    next(err);
   }
 }
 

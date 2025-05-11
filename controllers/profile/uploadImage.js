@@ -1,12 +1,22 @@
 const path = require('path');
 const saveUserImage = require('../../models/profile/saveImage');
 
-async function uploadImage(req, res) {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No image file provided' });
-  }
-
+async function uploadImage(req, res, next) {
   try {
+    if (!req.file || !req.file.filename) {
+      const err = new Error('No image file provided');
+      err.status = 400;
+      throw err;
+    }
+
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const allowedExt = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+    if (!allowedExt.includes(ext)) {
+      const err = new Error('Unsupported file type');
+      err.status = 415;
+      throw err;
+    }
+
     const filename = req.file.filename;
     const imageUrl = `/uploads/${filename}`;
 
@@ -17,8 +27,7 @@ async function uploadImage(req, res) {
       imageUrl
     });
   } catch (err) {
-    console.error('Image upload error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    next(err);
   }
 }
 
