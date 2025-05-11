@@ -1,13 +1,15 @@
 const createProject = require('../../models/project/createProject');
 const pool = require('../../config/db');
 
-module.exports = async function (req, res) {
+module.exports = async function (req, res, next) {
   try {
     const userId = req.user.id;
     const { client_id, name, description } = req.body;
 
     if (!client_id || !name) {
-      return res.status(400).json({ message: 'Client ID and project name are required' });
+      const err = new Error('Client ID and project name are required');
+      err.status = 400;
+      throw err;
     }
 
     const clientCheck = await pool.query(
@@ -16,7 +18,9 @@ module.exports = async function (req, res) {
     );
 
     if (clientCheck.rowCount === 0) {
-      return res.status(404).json({ message: 'Client not found or not owned by user' });
+      const err = new Error('Client not found or not owned by user');
+      err.status = 404;
+      throw err;
     }
 
     const project = await createProject({
@@ -28,7 +32,6 @@ module.exports = async function (req, res) {
 
     res.status(201).json(project);
   } catch (err) {
-    console.error('Error creating project:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };

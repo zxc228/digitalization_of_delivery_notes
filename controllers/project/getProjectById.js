@@ -1,6 +1,6 @@
 const getProjectById = require('../../models/project/getProjectById');
 
-module.exports = async function (req, res) {
+module.exports = async function (req, res, next) {
   try {
     const userId = req.user.id;
     const projectId = req.params.id;
@@ -8,12 +8,13 @@ module.exports = async function (req, res) {
     const project = await getProjectById(projectId, userId);
 
     if (!project) {
-      return res.status(404).json({ message: 'Project not found or not yours' });
+      const err = new Error('Project not found or not yours');
+      err.status = 404;
+      throw err;
     }
 
     res.json(project);
   } catch (err) {
-    console.error('Error fetching project:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };

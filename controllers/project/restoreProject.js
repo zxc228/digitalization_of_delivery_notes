@@ -1,6 +1,6 @@
 const restoreProject = require('../../models/project/restoreProject');
 
-module.exports = async function (req, res) {
+module.exports = async function (req, res, next) {
   try {
     const projectId = req.params.id;
     const userId = req.user.id;
@@ -8,12 +8,14 @@ module.exports = async function (req, res) {
     const restored = await restoreProject(projectId, userId);
 
     if (!restored) {
-      return res.status(404).json({ message: 'Project not found or not archived' });
+      const err = new Error('Project not found or not archived');
+      err.status = 404;
+      throw err;
     }
 
     res.json({ message: 'Project restored successfully', project: restored });
   } catch (err) {
     console.error('Error restoring project:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };

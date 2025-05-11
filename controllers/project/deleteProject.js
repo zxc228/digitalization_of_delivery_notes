@@ -1,6 +1,6 @@
 const deleteProject = require('../../models/project/deleteProject');
 
-module.exports = async function (req, res) {
+module.exports = async function (req, res, next) {
   try {
     const projectId = req.params.id;
     const userId = req.user.id;
@@ -8,12 +8,13 @@ module.exports = async function (req, res) {
     const deleted = await deleteProject(projectId, userId);
 
     if (!deleted) {
-      return res.status(404).json({ message: 'Project not found or not yours' });
+      const err = new Error('Project not found or not yours');
+      err.status = 404;
+      throw err;
     }
 
     res.json({ message: 'Project permanently deleted' });
   } catch (err) {
-    console.error('Error deleting project:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
