@@ -3,37 +3,54 @@ const jwt = require('jsonwebtoken');
 const createUser = require('../../models/user/createUser');
 const findUserByEmail = require('../../models/user/findUserByEmail');
 const sendMail = require('../../utils/mailer');
+const logger = require('../../utils/logger');
 
-async function register(req, res) {
+async function register(req, res, next) {
   try {
     const { email, password } = req.body;
 
-    if (!email || !email.includes('@') || typeof password !== 'string' || password.length < 8) {
-      return res.status(422).json({ error: 'Invalid email or password too short' });
+    
+    if (
+      !email || !email.includes('@') ||
+      typeof password !== 'string' || password.length < 8
+    ) {
+      const err = new Error('Invalid email or password too short');
+      err.status = 422;
+      throw err;
     }
 
+    
     const existing = await findUserByEmail(email);
     if (existing) {
-          return res.status(409).json({ error: 'User already exists' });
-        }
+      const err = new Error('User already exists');
+      err.status = 409;
+      throw err;
+    }
 
     const hashed = await bcrypt.hash(password, 10);
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     const newUser = await createUser(email, hashed, code);
-    console.log(`Validation code for ${email}: ${code}`);
+
+    
     await sendMail(
       email,
       'Confirm your email',
       `Your verification code is: ${code}`
     );
+
+    
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET is not set in environment');
+    }
+
     const token = jwt.sign(
       { id: newUser.id, role: newUser.role },
       process.env.JWT_SECRET,
       { expiresIn: '3d' }
     );
 
-    res.json({
+    res.status(201).json({
       token,
       user: {
         id: newUser.id,
@@ -42,12 +59,10 @@ async function register(req, res) {
         role: newUser.role
       }
     });
+
   } catch (err) {
-    if (err.code === '23505') {
-         return res.status(409).json({ error: 'User already exists' });
-          }
-    console.error('Register error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    logger.error(`Register error: ${err.stack || err.message}`);
+    next(err); // пробросим в глобальный обработчик + winston
   }
 }
 

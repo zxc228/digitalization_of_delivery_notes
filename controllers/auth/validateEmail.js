@@ -1,22 +1,40 @@
 const validateUser = require('../../models/user/updateUserValidation');
 
-async function validateEmail(req, res) {
-  const { code } = req.body;
+async function validateEmail(req, res, next) {
+  try {
+    const { code } = req.body;
 
-  if (!code || code.length !== 6) {
-    return res.status(422).json({ error: 'Invalid code' });
+  
+    if (typeof code !== 'string' || code.trim().length !== 6) {
+      const err = new Error('Invalid code');
+      err.status = 422;
+      throw err;
+    }
+
+    
+    if (!req.user?.id) {
+      const err = new Error('Unauthorized');
+      err.status = 401;
+      throw err;
+    }
+
+    const result = await validateUser(req.user.id, code);
+
+    if (!result.success) {
+      const err = new Error(
+        result.reason === 'Invalid code'
+          ? 'Incorrect code'
+          : result.reason
+      );
+      err.status = 400;
+      throw err;
+    }
+
+    res.status(200).json({ message: 'Email validated successfully' });
+
+  } catch (err) {
+    next(err);
   }
-
-  const result = await validateUser(req.user.id, code);
-
-  if (!result.success) {
-    const message = result.reason === 'Invalid code'
-      ? 'Incorrect code'
-      : result.reason;
-    return res.status(400).json({ error: message });
-  }
-
-  return res.json({ message: 'Email validated successfully' });
 }
 
 module.exports = validateEmail;

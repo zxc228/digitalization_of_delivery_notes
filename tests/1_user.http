@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ### Validate email with code
 PUT http://localhost:3000/api/user/validate
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY5NjQ1NDMsImV4cCI6MTc0NzIyMzc0M30.a-r7LaTb9UqtHagayg5CnjCzRlzyuZgz-g82so4h_qY
+Authorization: Bearer <YOUR_TOKEN>
 Content-Type: application/json
 
 { 

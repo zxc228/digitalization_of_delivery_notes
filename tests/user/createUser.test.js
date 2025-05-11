@@ -16,7 +16,7 @@ describe('POST /api/user/register', () => {
         password: 'securePass123'
       });
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('token');
     expect(res.body.user).toEqual(
       expect.objectContaining({ id: expect.any(Number), email: expect.any(String) })

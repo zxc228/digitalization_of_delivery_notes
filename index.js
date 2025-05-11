@@ -25,32 +25,32 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // === Log all HTTP requests (optional)
-app.use(expressWinston.logger({
-  winstonInstance: logger,
-  meta: false,
-  msg: '{{req.method}} {{req.url}} {{res.statusCode}} - {{res.responseTime}}ms',
-}));
+// app.use(expressWinston.logger({
+//   winstonInstance: logger,
+//   meta: false,
+//   msg: '{{req.method}} {{req.url}} {{res.statusCode}} - {{res.responseTime}}ms',
+// }));
 
 // === Main routes
 app.use('/api', routes);
 
 // === Attach status to error objects
-app.use((err, req, res, next) => {
-  if (!err.status && res.statusCode >= 400) {
-    err.status = res.statusCode;
-  }
-  next(err);
-});
+// app.use((err, req, res, next) => {
+//   if (!err.status && res.statusCode >= 400) {
+//     err.status = res.statusCode;
+//   }
+//   next(err);
+// });
 
 // === Error logging to winston (4xx/5xx handled via filters in logger)
-app.use(expressWinston.errorLogger({
-  winstonInstance: logger,
-}));
+// app.use(expressWinston.errorLogger({
+//   winstonInstance: logger,
+// }));
 
-// === Fallback error response
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
-});
+// // === Fallback error response
+// app.use((err, req, res, next) => {
+//   res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
+// });
 
 module.exports = app;
 
