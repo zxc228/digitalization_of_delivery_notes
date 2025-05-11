@@ -12,9 +12,9 @@ async function createUserValidated() {
 
     const reg = await global.agent.post('/api/user/register').send({ email, password });
 
-    if (reg.status === 200) {
-      await db.query('UPDATE users SET is_validated=true WHERE id=$1', [reg.body.user.id]);
-      return { token: reg.body.token };
+    if ([200, 201].includes(reg.status)) {
+      await db.query('UPDATE users SET is_validated = true WHERE id = $1', [reg.body.user.id]);
+      return { token: reg.body.token, id: reg.body.user.id, email };
     }
 
     if (reg.status !== 409) {

@@ -4,7 +4,7 @@ const uploadIPFS = require('../../utils/ipfsUploader');
 const generatePdfStream = require('../../utils/pdfGenerator');
 const pool = require('../../config/db');
 
-module.exports = async (req, res) => {
+module.exports = async (req, res, next) => {
   try {
     const noteId = +req.params.id;
     const userId = req.user.id;
@@ -12,7 +12,9 @@ module.exports = async (req, res) => {
     const storage = req.query.storage || 'ipfs'; // 'ipfs' | 'local'
 
     if (!file) {
-      return res.status(400).json({ message: 'Signature image is required' });
+      const err = new Error('Signature image is required');
+      err.status = 400;
+      throw err;
     }
 
     // === 1. Upload signature ===
@@ -29,23 +31,27 @@ module.exports = async (req, res) => {
       fs.unlinkSync(file.path); // delete temp file
     }
 
-    // === 2. Update DB: save signature and mark as signed ===
+    // === 2. Save signature in DB ===
     const result = await pool.query(
       'UPDATE delivery_notes SET signature_url = $1, signed = true WHERE id = $2 AND user_id = $3 AND signed = false RETURNING id',
       [signatureUrl, noteId, userId]
     );
 
     if (!result.rowCount) {
-      return res.status(400).json({ message: 'Note already signed or not found' });
+      const err = new Error('Note already signed or not found');
+      err.status = 400;
+      throw err;
     }
 
-    // === 3. Generate new PDF with signature ===
+    // === 3. Generate PDF with signature ===
     const pdfDoc = await generatePdfStream(noteId, userId);
     if (!pdfDoc) {
-      return res.status(404).json({ message: 'Note not found or access denied' });
+      const err = new Error('Note not found or access denied');
+      err.status = 404;
+      throw err;
     }
 
-    // === 4. Save PDF to IPFS or locally ===
+    // === 4. Save signed PDF ===
     let pdfUrl = null;
     if (storage === 'ipfs') {
       const tmpPath = path.join(process.env.UPLOAD_DIR || 'uploads', `note_${noteId}.pdf`);
@@ -56,12 +62,12 @@ module.exports = async (req, res) => {
       await new Promise((resolve) => out.on('finish', resolve));
 
       pdfUrl = await uploadIPFS(tmpPath);
-      fs.unlinkSync(tmpPath); // delete temp file
+      fs.unlinkSync(tmpPath);
     } else {
-      pdfDoc.end(); // if local — just end the stream
+      pdfDoc.end();
     }
 
-    // === 5. Update PDF link in DB ===
+    // === 5. Update PDF URL in DB ===
     if (pdfUrl) {
       await pool.query(
         'UPDATE delivery_notes SET pdf_url = $1 WHERE id = $2 AND user_id = $3',
@@ -75,8 +81,8 @@ module.exports = async (req, res) => {
       pdfUrl,
     });
 
-  } catch (e) {
-    console.error('Sign error:', e);
-    res.status(500).json({ message: 'Server error during signing' });
+  } catch (err) {
+    console.error('Sign error:', err);
+    next(err);
   }
 };

@@ -34,23 +34,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // === Main routes
 app.use('/api', routes);
 
-// === Attach status to error objects
-// app.use((err, req, res, next) => {
-//   if (!err.status && res.statusCode >= 400) {
-//     err.status = res.statusCode;
-//   }
-//   next(err);
-// });
-
-// === Error logging to winston (4xx/5xx handled via filters in logger)
-// app.use(expressWinston.errorLogger({
-//   winstonInstance: logger,
-// }));
-
-// // === Fallback error response
-// app.use((err, req, res, next) => {
-//   res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
-// });
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || 'Internal server error';
+  res.status(status).json({ message });
+});
 
 module.exports = app;
 

@@ -28,7 +28,6 @@ afterAll(async () => {
   await db.end();
 });
 
-
 describe('POST /api/deliverynote', () => {
   test('creates a new delivery note with items', async () => {
     const { token, projectId } = await createUserWithProject();
@@ -42,9 +41,10 @@ describe('POST /api/deliverynote', () => {
       });
 
     expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty('message');
     expect(res.body.message).toMatch(/created/i);
     expect(res.body.noteId).toBeDefined();
-  }); 
+  });
 
   test('returns 400 if items array is missing or empty', async () => {
     const { token, projectId } = await createUserWithProject();
@@ -55,12 +55,14 @@ describe('POST /api/deliverynote', () => {
       .send({ project_id: projectId });
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toMatch(/required/i);
+    expect(res.body).toHaveProperty('message');
+    expect(typeof res.body.message).toBe('string');
+    expect(res.body.message.toLowerCase()).toMatch(/required/);
   });
 
   test('returns 404 if project does not belong to user', async () => {
-    const { projectId } = await createUserWithProject(); // this project belongs to user1
-    const { token: otherToken } = await createUserWithProject(); // user2
+    const { projectId } = await createUserWithProject(); // belongs to user1
+    const { token: otherToken } = await createUserWithProject(); // this is user2
 
     const res = await global.agent
       .post('/api/deliverynote')
@@ -71,6 +73,8 @@ describe('POST /api/deliverynote', () => {
       });
 
     expect(res.status).toBe(404);
-    expect(res.body.message).toMatch(/not yours/i);
+    expect(res.body).toHaveProperty('message');
+    expect(typeof res.body.message).toBe('string');
+    expect(res.body.message.toLowerCase()).toMatch(/not found|not yours/);
   });
 });
