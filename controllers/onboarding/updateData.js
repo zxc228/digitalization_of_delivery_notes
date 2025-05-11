@@ -1,11 +1,13 @@
 const updateUserProfile = require('../../models/user/updateUserProfile');
 const updateUserCompany = require('../../models/user/updateUserCompany');
 
-async function updatePersonalData(req, res) {
+async function updatePersonalData(req, res, next) {
   const { name, surnames, nif } = req.body;
 
   if (!name || !surnames || !nif) {
-    return res.status(422).json({ error: 'Missing required personal fields' });
+    const err = new Error('Missing required personal fields');
+    err.status = 422;
+    return next(err);
   }
 
   try {
@@ -19,16 +21,17 @@ async function updatePersonalData(req, res) {
       message: 'Personal data updated successfully',
     });
   } catch (err) {
-    console.error('Onboarding error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    next(err);
   }
 }
 
-async function updatePersonalAndCompanyData(req, res) {
+async function updatePersonalAndCompanyData(req, res, next) {
   const { name, surnames, nif, company_name, cif, address, selfEmployed } = req.body;
 
   if (!name || !surnames || !nif) {
-    return res.status(422).json({ error: 'Missing required personal fields' });
+    const err = new Error('Missing required personal fields');
+    err.status = 422;
+    return next(err);
   }
 
   try {
@@ -44,8 +47,7 @@ async function updatePersonalAndCompanyData(req, res) {
       message: 'Personal and/or company data updated successfully'
     });
   } catch (err) {
-    console.error('Onboarding error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    next(err);
   }
 }
 
