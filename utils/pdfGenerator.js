@@ -1,8 +1,18 @@
 const PDFDocument = require('pdfkit');
 const getNoteById = require('../models/deliverynote/getNoteById');
-const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const { create } = require('ipfs-http-client');
+
+const ipfs = create({ url: process.env.IPFS_API_URL || 'http://localhost:5001' });
+
+async function streamToBuffer(stream) {
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
+}
 
 async function generatePdfStream(noteId, userId) {
   const note = await getNoteById(noteId, userId);
@@ -28,7 +38,6 @@ async function generatePdfStream(noteId, userId) {
   const total = note.items.reduce((sum, i) => sum + parseFloat(i.total), 0);
   doc.fontSize(14).text(`Total: €${total.toFixed(2)}`, { align: 'right' });
 
- 
   if (note.signature_url) {
     doc.moveDown().moveDown();
     doc.text('Signed:', { underline: true });
@@ -37,18 +46,19 @@ async function generatePdfStream(noteId, userId) {
       let imageBuffer;
 
       if (note.signature_url.startsWith('/uploads/')) {
-        // Локальный файл
-        const localPath = path.join(__dirname, '..', note.signature_url); // абсолютный путь
+        const localPath = path.join(__dirname, '..', note.signature_url);
         imageBuffer = fs.readFileSync(localPath);
+      } else if (note.signature_url.includes('/ipfs/')) {
+        const cid = note.signature_url.split('/ipfs/')[1];
+        const stream = ipfs.cat(cid);
+        imageBuffer = await streamToBuffer(stream);
       } else {
-        // Cloudinary или любой внешний
-        const response = await axios.get(note.signature_url, { responseType: 'arraybuffer' });
-        imageBuffer = Buffer.from(response.data, 'binary');
+        throw new Error('Unsupported signature source');
       }
 
       doc.image(imageBuffer, {
         width: 150,
-        align: 'left'
+        align: 'left',
       });
 
       doc.moveDown();

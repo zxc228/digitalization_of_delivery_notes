@@ -9,7 +9,7 @@ Content-Type: application/json
 
 ### Create client
 POST http://localhost:3000/api/client
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4ODEyNzUsImV4cCI6MTc0NzE0MDQ3NX0.mYYRdDQYWwB4fC3Bvr8X_DQgSVSC14nYF8uxDIg2f2A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY5NjQ1NjEsImV4cCI6MTc0NzIyMzc2MX0.1alCMXLuwizZ4W2YlrBOVABGHFX-f4kcNdquN63e6Og
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 
 ### Create project
 POST http://localhost:3000/api/project
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4ODEyNzUsImV4cCI6MTc0NzE0MDQ3NX0.mYYRdDQYWwB4fC3Bvr8X_DQgSVSC14nYF8uxDIg2f2A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY5NjQ1NjEsImV4cCI6MTc0NzIyMzc2MX0.1alCMXLuwizZ4W2YlrBOVABGHFX-f4kcNdquN63e6Og
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ### Create delivery note
 POST http://localhost:3000/api/deliverynote
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY4ODEyNzUsImV4cCI6MTc0NzE0MDQ3NX0.mYYRdDQYWwB4fC3Bvr8X_DQgSVSC14nYF8uxDIg2f2A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY5NjQ1NjEsImV4cCI6MTc0NzIyMzc2MX0.1alCMXLuwizZ4W2YlrBOVABGHFX-f4kcNdquN63e6Og
 Content-Type: application/json
 
 {
@@ -49,7 +49,7 @@ Authorization: Bearer <YOUR_TOKEN>
 
 ### Fetch single delivery note
 GET http://localhost:3000/api/deliverynote/1
-Authorization: Bearer <YOUR_TOKEN>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY5NjM4MDMsImV4cCI6MTc0NzIyMzAwM30.FEYGrgXCMx4iiR84mTyIbplQvAuKk1qp6-I9BuftHKk
 
 ### Delete delivery note (if unsigned)
 DELETE http://localhost:3000/api/deliverynote/7
@@ -70,8 +70,8 @@ Authorization: Bearer <YOUR_TOKEN>
 
 
 # 1. Auto mode (no storage param)
-curl -X POST "http://localhost:3000/api/deliverynote/1/sign" \
-  -H "Authorization: Bearer <YOUR_TOKEN>" \
+curl -X POST "http://localhost:3000/api/deliverynote/1/sign" `
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDY5NjM4MDMsImV4cCI6MTc0NzIyMzAwM30.FEYGrgXCMx4iiR84mTyIbplQvAuKk1qp6-I9BuftHKk" `
   -F "signature=@./images.jpeg"
 
 # 2. Force IPFS storage

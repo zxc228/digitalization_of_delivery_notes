@@ -5,12 +5,11 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "npx jest --detectOpenHandles --forceExit", 
+    "test": "npx jest --detectOpenHandles --forceExit",
     "test:user": "npx jest tests/user",
-    "test:client": "npx jest tests/client", 
+    "test:client": "npx jest tests/client",
     "test:project": "npx jest tests/project",
     "test:deliveryNote": "npx jest tests/deliveryNote"
-
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,7 @@
     "cloudinary": "^2.6.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "ipfs-http-client": "^50.1.2",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.2",
