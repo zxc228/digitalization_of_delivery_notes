@@ -1,0 +1,28 @@
+# Server
+PORT=3000
+
+# PostgreSQL Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=user
+DB_PASSWORD=password
+DB_NAME=user_management
+
+# JWT
+JWT_SECRET=supersecret
+
+# Uploads
+UPLOAD_DIR=uploads
+UPLOAD_LIMIT_MB=10
+
+# IPFS (local daemon)
+IPFS_API_URL=http://localhost:5001
+IPFS_GATEWAY_URL=http://localhost:8080/ipfs
+
+# Mailhog (local SMTP)
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_FROM=no-reply@example.com
+
+# Logging
+LOG_4XX=true
