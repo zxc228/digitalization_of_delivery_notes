@@ -1,6 +1,6 @@
 const archiveClient = require('../../models/client/archiveClient');
 
-module.exports = async function (req, res) {
+module.exports = async function (req, res, next) {
   try {
     const clientId = req.params.id;
     const userId = req.user.id;
@@ -8,12 +8,13 @@ module.exports = async function (req, res) {
     const archived = await archiveClient(clientId, userId);
 
     if (!archived) {
-      return res.status(404).json({ message: 'Client not found or already archived' });
+      const err = new Error('Client not found or already archived');
+      err.status = 404;
+      return next(err);
     }
 
     res.json({ message: 'Client archived successfully', client: archived });
   } catch (err) {
-    console.error('Error archiving client:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };

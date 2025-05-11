@@ -1,6 +1,6 @@
 const restoreClient = require('../../models/client/restoreClient');
 
-module.exports = async function (req, res) {
+module.exports = async function (req, res, next) {
   try {
     const clientId = req.params.id;
     const userId = req.user.id;
@@ -13,7 +13,6 @@ module.exports = async function (req, res) {
 
     res.json({ message: 'Client restored successfully', client: restored });
   } catch (err) {
-    console.error('Error restoring client:', err);
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
 };
